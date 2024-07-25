@@ -1,6 +1,7 @@
 import { View, Text, ViewProps, TextInput, TouchableOpacity, Image } from "react-native";
 import React, { useState } from "react";
 import { icons } from "@/constants";
+import type { FieldError } from "react-hook-form";
 
 type FormFieldProps = {
   title: string;
@@ -9,6 +10,7 @@ type FormFieldProps = {
   placeholder?: string;
   keyboardType?: string
   otherStyles?: string
+  error?: FieldError
 } & ViewProps;
 
 const FormField = ({
@@ -18,6 +20,7 @@ const FormField = ({
   otherStyles,
   keyboardType,
   placeholder,
+  error,
   ...props
 }: FormFieldProps) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -45,6 +48,10 @@ const FormField = ({
           </TouchableOpacity>
         )}
       </View>
+      {error && <Text className="text-red-500 text-sm">
+        {error.message}
+      </Text>
+      }
     </View>
 
   );

@@ -1,4 +1,4 @@
-import { Account, Client, ID } from 'react-native-appwrite';
+import { Account, Avatars, Client, Databases, ID } from 'react-native-appwrite';
 
 
 export const config = {
@@ -21,8 +21,39 @@ client
 
 const account = new Account(client);
 
+const avatars = new Avatars(client);
+
+const databases = new Databases(client);
+
 // Register User
 export async function createUser(email: string, password: string, username: string) {
+  const newAccount = await account.create(
+    ID.unique(),
+    email,
+    password,
+    username
+  );
+  if (!newAccount) throw Error
+  const avatarUrl = avatars.getInitials(username);
 
+  await SignIn(email, password);
 
+  const newUser = await databases.createDocument(
+    config.databaseId,
+    config.userCollection,
+    ID.unique(),
+    {
+      accountId: newAccount.$id,
+      email,
+      username,
+      avatar: avatarUrl
+    }
+  )
+
+  return newUser;
+}
+
+export async function SignIn(email: string, password: string) {
+  const session = await account.createEmailPasswordSession(email, password);
+  return session
 }
