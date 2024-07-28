@@ -1,16 +1,18 @@
 import { useState } from "react";
-import { ResizeMode, Video } from "expo-av";
+import { AVPlaybackStatusSuccess, ResizeMode, Video } from "expo-av";
 import * as Animatable from "react-native-animatable";
 import {
   FlatList,
   Image,
   ImageBackground,
+  PointProp,
   TouchableOpacity,
 } from "react-native";
 
 import { icons } from "../constants";
+import { Models } from "react-native-appwrite";
 
-const zoomIn = {
+const zoomIn: any = {
   0: {
     scale: 0.9,
   },
@@ -28,7 +30,12 @@ const zoomOut = {
   },
 };
 
-const TrendingItem = ({ activeItem, item }) => {
+type TrendingItemProps = {
+  activeItem: any;
+  item: Models.Document
+}
+
+const TrendingItem = ({ activeItem, item }: TrendingItemProps) => {
   const [play, setPlay] = useState(false);
 
   return (
@@ -45,7 +52,7 @@ const TrendingItem = ({ activeItem, item }) => {
           useNativeControls
           shouldPlay
           onPlaybackStatusUpdate={(status) => {
-            if (status.didJustFinish) {
+            if ((status as AVPlaybackStatusSuccess).didJustFinish) {
               setPlay(false);
             }
           }}
@@ -75,10 +82,10 @@ const TrendingItem = ({ activeItem, item }) => {
   );
 };
 
-const Trending = ({ posts }) => {
+const Trending = ({ posts }: { posts: Models.Document[] }) => {
   const [activeItem, setActiveItem] = useState(posts[0]);
 
-  const viewableItemsChanged = ({ viewableItems }) => {
+  const viewableItemsChanged = ({ viewableItems }: { viewableItems: any }) => {
     if (viewableItems.length > 0) {
       setActiveItem(viewableItems[0].key);
     }
@@ -96,7 +103,7 @@ const Trending = ({ posts }) => {
       viewabilityConfig={{
         itemVisiblePercentThreshold: 70,
       }}
-      contentOffset={{ x: 170 }}
+      contentOffset={{ x: 170 } as PointProp}
     />
   );
 };

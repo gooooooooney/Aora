@@ -1,3 +1,4 @@
+import { Alert } from 'react-native';
 import { Account, Avatars, Client, Databases, ID, Query } from 'react-native-appwrite';
 
 
@@ -88,5 +89,54 @@ export async function getCurrentUser() {
   } catch (error) {
     console.log(error);
     return null;
+  }
+}
+
+// Get video posts created by user
+export async function getUserPosts(userId: string) {
+  try {
+    const posts = await databases.listDocuments(
+      config.databaseId,
+      config.videoCollection,
+      [Query.equal("creator", userId)]
+    );
+
+    return posts.documents;
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+// Get all video Posts
+export async function getAllPosts() {
+  try {
+    const posts = await databases.listDocuments(
+      config.databaseId,
+      config.videoCollection
+    );
+
+    return posts.documents;
+  } catch (error) {
+    console.error(error);
+
+    throw error;
+  }
+}
+
+
+// Get latest created video posts
+export async function getLatestPosts() {
+  try {
+    const posts = await databases.listDocuments(
+      config.databaseId,
+      config.videoCollection,
+      [Query.orderDesc("$createdAt"), Query.limit(7)]
+    );
+
+    return posts.documents;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 }
